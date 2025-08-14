@@ -1,0 +1,30 @@
+Kitbuild/
+├── main/                      # 🧙‍♂️ Entry point, CLI glue
+│   └── main.c
+├── src/                       # 🧩 Ritual logic
+│   ├── parser/                # Config parsing
+│   │   ├── loader.c
+│   │   ├── scanner.c
+│   │   ├── resolver.c
+│   │   ├── merge.c
+│   │   └── (no headers here)
+│   ├── builder/               # Build command logic
+│   │   ├── executor.c
+│   │   ├── compiler.c
+│   │   └── (no headers here)
+│   ├── logger/                # Symbolic narration
+│   │   ├── narrator.c
+│   │   └── (no headers here)
+│   ├── config/                # Data structures
+│   │   ├── config.c
+│   │   └── (no headers here)
+├── include/                   # 📜 All headers live here
+│   ├── parser.h
+│   ├── builder.h
+│   ├── logger.h
+│   ├── config.h
+│   └── kitbuild.h             # Optional: unified public API
+├── kit.yml                    # Example config
+├── mkit.yml                   # Master config
+├── README.md                  # Bardic documentation
+

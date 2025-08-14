@@ -1,0 +1,94 @@
+#--- Single Config Project
+
+- The project uses a single configuration file named `kit.yml` at the root.
+- All build targets, compilers, flags, and architecture settings are declared in `kit.yml`.
+- No other config files are used.
+- Ideal for simple or small projects.
+
+Example structure:
+project/
+└── kit.yml
+
+Kitbuild behavior:
+- `kitbuild` → builds using `kit.yml`
+- `kitbuild --ritual` → narrates each build step
+
+#--- Master–Segment Project
+
+- The project uses a master config named `mkit.yml` at the root.
+- Each segment folder contains its own config named `skit.yml`.
+- `mkit.yml` declares global variables:
+  - compilers
+  - flags
+  - architecture
+- `skit.yml` declares local variables and build rules.
+- Segment configs can reference global variables from `mkit.yml`.
+- Segment configs can override or extend global variables locally.
+
+Example structure:
+project/
+├── mkit.yml
+├── core/
+│   └── skit.yml
+├── input/
+│   └── skit.yml
+├── turbo/
+│   └── skit.yml
+
+Kitbuild behavior:
+- `kitbuild core/` → builds using `core/skit.yml` + `mkit.yml`
+- `kitbuild --all` → builds all segments using `mkit.yml`
+- `kitbuild turbo/` → builds turbo logic with master compilers
+
+Optional behaviors:
+- Kitbuild checks for unused compilers in `mkit.yml`
+  - Emits symbolic warnings for unused glyphs
+  - Example: `[COMPILER-RITUAL] Warning: declared compiler 'cuda' is unused`
+- Segment-local variables take priority over master variables
+- `--strict` mode can enforce variable usage and config completeness
+- `--lint` mode can suggest pruning unused glyphs
+
+#--- Master–Leader–Segment Project
+
+- This mode introduces a middle layer: leader configs.
+- The master config (`mkit.yml`) holds global variables:
+  - compilers
+  - flags
+  - architecture
+- Each leader config (`lkit.yml`) lives inside a domain folder and manages its own segments.
+- Each segment config (`skit.yml`) lives inside a segment folder under a leader.
+
+Example structure:
+project/
+├── mkit.yml
+├── game/
+│   ├── lkit.yml
+│   ├── logic/
+│   │   └── skit.yml
+│   └── input/
+│       └── skit.yml
+├── turbo/
+│   ├── lkit.yml
+│   └── gpu/
+│       └── skit.yml
+
+Variable behavior:
+- `mkit.yml` defines global variables.
+- `lkit.yml` may define domain-specific variables.
+- **Unresolved design question**: Should users explicitly import global variables from `mkit.yml` into `lkit.yml` so that `skit.yml` can access them?
+  - This mirrors Kconfig-style behavior: leaders act as gatekeepers.
+  - If enabled, leaders must declare which master variables are exposed to segments.
+  - If disabled, segments can access master variables directly, bypassing leaders.
+
+Kitbuild behavior:
+- `kitbuild --all` → builds in master → leader → segment order
+- `kitbuild game/` → builds leader and its segments
+- `kitbuild game/logic/` → builds segment using leader + master context
+
+Optional behaviors:
+- Leaders may override master variables for their domain
+- Segments may override leader or master variables locally
+- `--strict` mode can enforce variable import declarations
+- `--lint` mode can detect unused or shadowed variables
+- Future support for symbolic variable scoping and inheritance tracing
+
