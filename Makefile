@@ -1,9 +1,3 @@
-#!/bin/bash
-# 🧞 code.sh – Summons the Nightmare Makefile for Kitbuild
-
-echo "📜 Summoning Makefile for Kitbuild..."
-
-cat > Makefile <<'EOF'
 # 🧟 Nightmare Makefile – Kitbuild Compilation Ritual
 
 CC = gcc
@@ -33,8 +27,3 @@ clean:
     @echo "🧹 Realm cleansed"
 
 .PHONY: all clean
-EOF
-
-echo "✅ Makefile created."
-echo "🧪 Run 'make' to begin the ritual."
-
