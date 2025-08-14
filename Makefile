@@ -1,29 +1,48 @@
-# 🧟 Nightmare Makefile – Kitbuild Compilation Ritual
+# 🧟 Kitbuild Makefile – Dist Ritual + Meta Naming
 
 CC = gcc
 CFLAGS = -Wall -Wextra -O2 -Iinclude
 SRC = $(wildcard src/**/*.c) $(wildcard main/*.c)
 OBJ = $(patsubst %.c,build/%.o,$(SRC))
-BIN = bin/kitbuild
 
-# Default ritual
+# Default binary name
+BIN_NAME = kitbuild
+
+# Meta tag (e.g., gen1, v1.2.3)
+META ?= default
+
+# Output directory logic
+ifeq ($(shell test -d dist && echo yes),yes)
+    BIN_DIR = dist
+else
+    BIN_DIR = bin
+endif
+
+BIN = $(BIN_DIR)/$(BIN_NAME)-$(META)
+
+# 🧙‍♂️ Ritual: Build all
 all: $(BIN)
 
-# Link objects into binary
+# 🧱 Link objects into binary
 $(BIN): $(OBJ)
-    @mkdir -p bin
+    @mkdir -p $(BIN_DIR)
     $(CC) $(OBJ) -o $(BIN)
-    @echo "🧙‍♂️ Linked binary: $(BIN)"
+    @echo "🔮 Linked binary: $(BIN)"
 
-# Compile each source file into object
+# ⚙️ Compile each source file into object
 build/%.o: %.c
     @mkdir -p $(dir $@)
     $(CC) $(CFLAGS) -c $< -o $@
     @echo "⚙️ Compiled glyph: $< → $@"
 
-# Cleanse the realm
+# 🧹 Cleanse the realm
 clean:
-    rm -rf build bin
-    @echo "🧹 Realm cleansed"
+    rm -rf build bin dist
+    @echo "🧼 Realm cleansed"
 
-.PHONY: all clean
+# 📜 Show rituals
+info:
+    @echo "🧾 Kitbuild Meta: $(META)"
+    @echo "📦 Output Path: $(BIN)"
+
+.PHONY: all clean info
